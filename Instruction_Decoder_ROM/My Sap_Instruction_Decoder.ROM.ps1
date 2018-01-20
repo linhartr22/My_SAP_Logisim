@@ -15,8 +15,8 @@ $cSig = @{
     'B_OUT'      = 0x000400;
     'B_IN'       = 0x000800;
      
-    'TMP_OUT'    = 0x001000;
-    'TMP_IN'     = 0x002000;
+    'ALU_OUT'    = 0x001000;
+    'ALU_IN'     = 0x002000;
     'T_RESET'    = 0x004000;
     'DISP_IN'    = 0x008000;
      
@@ -38,9 +38,10 @@ $ops = @{
     'FETCH_ADDR' = $cSig['RAM_OUT'] -bor $cSig['PC_INC'] -bor $cSig['ADDR_IN'];
     'FETCH_A'    = $cSig['RAM_OUT'] -bor $cSig['PC_INC'] -bor $cSig['A_IN'];
     'FETCH_B'    = $cSig['RAM_OUT'] -bor $cSig['PC_INC'] -bor $cSig['B_IN'];
+    'FETCH_ALU'  = $cSig['RAM_OUT'] -bor $cSig['PC_INC'] -bor $cSig['ALU_IN']
     'RAM2A'      = $cSig['RAM_OUT'] -bor $cSig['A_IN'];
     'RAM2B'      = $cSig['RAM_OUT'] -bor $cSig['B_IN'];
-    'RAM2TMP'    = $cSig['RAM_OUT'] -bor $cSig['TMP_IN'];
+    'RAM2ALU'    = $cSig['RAM_OUT'] -bor $cSig['ALU_IN'];
     'RAM2DISP'   = $cSig['RAM_OUT'] -bor $cSig['DISP_IN'];
     'RAM2PC'     = $cSig['RAM_OUT'] -bor $cSig['PC_IN'];
     'RAM2PC_C'   = $cSig['RAM_OUT'] -bor $cSig['PC_IN'] -bor $cSig['C_OUT'];
@@ -50,18 +51,18 @@ $ops = @{
     'RAM2PC_S'   = $cSig['RAM_OUT'] -bor $cSig['PC_IN'] -bor $cSig['S_OUT'];
     'RAM2PC_NS'  = $cSig['RAM_OUT'] -bor $cSig['PC_IN'] -bor $cSig['S_OUT'] -bor $cSig['FLAG_INV'];
     'A2B'        = $cSig['A_OUT'] -bor $cSig['B_IN'];
-    'A2TMP'      = $cSig['A_OUT'] -bor $cSig['TMP_IN'];
+    'A2ALU'      = $cSig['A_OUT'] -bor $cSig['ALU_IN'];
     'A2RAM'      = $cSig['A_OUT'] -bor $cSig['RAM_IN'];
     'A2DISP'     = $cSig['A_OUT'] -bor $cSig['DISP_IN'];
     'B2A'        = $cSig['B_OUT'] -bor $cSig['A_IN'];
-    'B2TMP'      = $cSig['B_OUT'] -bor $cSig['TMP_IN'];
+    'B2ALU'      = $cSig['B_OUT'] -bor $cSig['ALU_IN'];
     'B2RAM'      = $cSig['B_OUT'] -bor $cSig['RAM_IN'];
     'B2DISP'     = $cSig['B_OUT'] -bor $cSig['DISP_IN'];
-    'TMP2A'      = $cSig['TMP_OUT'] -bor $cSig['A_IN'];
-    'ALU_ADD'    = $cSig['TMP_IN'];
-    'ALU_ADC'    = $cSig['TMP_IN'] -bor $cSig['C_OUT'];
-    'ALU_SUB'    = $cSig['TMP_IN'] -bor $cSig['ALU_SUB'];
-    'ALU_SBB'    = $cSig['TMP_IN'] -bor $cSig['ALU_SUB'] -bor $cSig['C_OUT'];
+    'ALU2A'      = $cSig['ALU_OUT'] -bor $cSig['A_IN'];
+    'ALU_ADD'    = $cSig['ALU_IN'];
+    'ALU_ADC'    = $cSig['ALU_IN'] -bor $cSig['C_OUT'];
+    'ALU_SUB'    = $cSig['ALU_IN'] -bor $cSig['ALU_SUB'];
+    'ALU_SBB'    = $cSig['ALU_IN'] -bor $cSig['ALU_SUB'] -bor $cSig['C_OUT'];
     'ALU_STC'    = $cSig['ALU_STC'];
     'ALU_CLC'    = $cSig['ALU_CLC'];
 }
@@ -122,54 +123,54 @@ $out += "`n8*ffffff`n"
 
 # ADD
 # 10 2/6 ADDX (DD)
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_ADD']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2ALU'] -bor $ops['ALU_ADD']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 11 2/5 ADDI DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_ADD']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['FETCH_ALU'] -bor $ops['ALU_ADD']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 12 1/4 ADDA
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2TMP'] -bor $ops['ALU_ADD']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2ALU'] -bor $ops['ALU_ADD']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 13 1/4 ADDB
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2TMP'] -bor $ops['ALU_ADD']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2ALU'] -bor $ops['ALU_ADD']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 14 2/6 ADCX (DD)
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_ADC']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2ALU'] -bor $ops['ALU_ADC']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 15 2/5 ADCI DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_ADC']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['FETCH_ALU'] -bor $ops['ALU_ADC']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 16 1/4 ADCA
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2TMP'] -bor $ops['ALU_ADC']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2ALU'] -bor $ops['ALU_ADC']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 17 1/4 ADCB
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2TMP'] -bor $ops['ALU_ADC']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2ALU'] -bor $ops['ALU_ADC']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 
 # SUB
 # 18 2/6 SUBX (DD)
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_SUB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2ALU'] -bor $ops['ALU_SUB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 19 2/5 SUBI DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_SUB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['FETCH_ALU'] -bor $ops['ALU_SUB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 1A 1/4 SUBA
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2TMP'] -bor $ops['ALU_SUB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2ALU'] -bor $ops['ALU_SUB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 1B 1/4 SUBB
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2TMP'] -bor $ops['ALU_SUB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2ALU'] -bor $ops['ALU_SUB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 1C 2/6 SBBX (DD)
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_SBB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2ALU'] -bor $ops['ALU_SBB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 1D 2/5 SBBI DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['RAM2TMP'] -bor $ops['ALU_SBB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['FETCH_ALU'] -bor $ops['ALU_SBB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 1E 1/4 SBBA
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2TMP'] -bor $ops['ALU_SBB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2ALU'] -bor $ops['ALU_SBB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 1F 1/4 SBBB
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2TMP'] -bor $ops['ALU_SBB']),$ops['TMP2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2ALU'] -bor $ops['ALU_SBB']),$ops['ALU2A'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 
 # FLAGS
@@ -198,18 +199,18 @@ $out += "`n8*ffffff`n"
 $out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 
-# UNUSED
-# 28 1/2 nop
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+# BOOLEAN
+# 28 2/6 CMPX (DD)
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['FETCH_ADDR'],($ops['RAM2ALU'] -bor $ops['ALU_SUB']),$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
-# 29 1/2 nop
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+# 29 2/5 CMPI DD
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],($ops['FETCH_ALU'] -bor $ops['ALU_SUB']),$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
-# 2A 1/2 nop
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+# 2A 1/4 CMPA
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['A2ALU'] -bor $ops['ALU_SUB']),$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
-# 2B 1/2 nop
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+# 2B 1/4 CMPB
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],($ops['B2ALU'] -bor $ops['ALU_SUB']),$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 2C 1/2 nop
 $out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
@@ -279,5 +280,6 @@ $out += "`n8*ffffff`n"
 # Output Results
 $out
 $outFile = [Environment]::GetFolderPath('MyDocuments')
-$outfile += "\Logisim\My Sap_Instruction_Decoder_PS.ROM"
+$outFile += "\Logisim\My Sap_Instruction_Decoder_PS.ROM"
+$outFile
 Out-File -FilePath $outFile -InputObject $out -Encoding utf8
