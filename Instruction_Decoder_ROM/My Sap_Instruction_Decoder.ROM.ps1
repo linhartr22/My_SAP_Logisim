@@ -239,16 +239,16 @@ $out += "`n8*ffffff`n"
 $out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_NC'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 34 1/2 JZ DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_C'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_Z'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 35 1/2 JNZ DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_C'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_NZ'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 36 1/2 JS DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_C'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_S'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 # 37 1/2 JNS DD
-$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_C'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
+$out += '{0:x} {1:x} {2:x} {3:x} {4:x} {5:x} {6:x} {7:x}' -f $ops['PC2ADDR'],$ops['FETCH_IR'],$ops['PC2ADDR'],$ops['RAM2PC_NS'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET'],$ops['T_RESET']
 $out += "`n8*ffffff`n"
 
 # CONTROL
